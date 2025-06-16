@@ -1,0 +1,429 @@
+
+function InitVar()
+    --55
+	Vars.timeToCreateDarkTribe = 55
+    Vars.timeToAttackDarkTribe = 60
+    Vars.timeToAttackWarMachine = 87
+    Vars.timeToAttackWarShip = 1
+    Vars.timeToGarnisonWarriors = 5
+    Vars.timeToTrade = 2
+
+end
+
+
+
+function deathZone()
+    if Game.Time() < Vars.timeToCreateDarkTribe then
+        -- dbg.stm("Magiczna nad górniczą doliną nie pozwala nam przejść dalej.")
+		Settlers.KillSelectableSettlers(1,-1,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2),1)
+		Vehicles.KillVehicles(1,Vehicles.WARMACHINE,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+		Vehicles.KillVehicles(1,Vehicles.CART,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+
+        Settlers.KillSelectableSettlers(4,-1,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2),1)
+		Vehicles.KillVehicles(4,Vehicles.WARMACHINE,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+		Vehicles.KillVehicles(4,Vehicles.CART,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+
+
+        Settlers.KillSelectableSettlers(2,-1,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2),1)
+		Vehicles.KillVehicles(2,Vehicles.WARMACHINE,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+		Vehicles.KillVehicles(2,Vehicles.CART,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+
+
+        Settlers.KillSelectableSettlers(3,-1,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2),1)
+		Vehicles.KillVehicles(3,Vehicles.WARMACHINE,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+		Vehicles.KillVehicles(3,Vehicles.CART,circles.circle1.center.x,circles.circle1.center.y,(circles.circle1.radius-2))
+    else
+        unrequest_event(deathZone,Events.FIVE_TICKS)
+    end
+end
+
+function attackWarShip()
+    if Game.Time() == Vars.timeToAttackWarShip then
+        Vehicles.AddVehicle(920, 986, 2, Vehicles.WARSHIP, 1, 80, 1)
+        AI.NewSquad(2, AI.CMD_MOVE_AND_STAY, 901,756)
+
+        Vehicles.AddVehicle(2, 812, 2, Vehicles.WARSHIP, 1, 80, 1)
+        AI.NewSquad(2, AI.CMD_MOVE_AND_STAY, 793,665)
+        -- AI.NewSquad(2, AI.AI.CMD_SUICIDE_MISSION)
+
+        Vars.timeToAttackWarShip = 0
+    end
+end
+-- function attackWarmachine()
+--     if Game.Time() == Vars.timeToAttackWarMachine then
+--         -- Vehicles.AddVehicle(920, 986, 2, Vehicles.WARSHIP, 80, 1, 1) 
+
+--         -- Vehicles.AddVehicle(405, 809, 2, Vehicles.WARMACHINE, 2, 80, 1)
+        
+--         -- Vehicles.AddVehicle(441, 251, 2, Vehicles.WARMACHINE, 1, 80, 1)
+--         AI.NewSquad(2, AI.CMD_MOVE_AND_STAY, 423,192)
+
+--         Vars.timeToAttackWarMachine = 0
+
+--         --Vars.timeToAttackWarMachine = Vars.timeToAttackWarMachine + 5 + Game.Random(5)
+--     end
+-- end
+
+-- Tworzy i atakuje katapultę gracza 2
+function attackWarmachine()
+
+    if Game.Time() == Vars.timeToAttackWarMachine then
+        local player = 2
+        local startX, startY = 441, 251
+        local targetX, targetY = 423, 192
+
+        dbg.stm("attackWarmachine #2")
+        -- 1. Stworzenie pojazdu (katapulty) dla gracza
+        -- Entities.WarmachineCatapult to przykładowy identyfikator typu z API
+        local entityId = Vehicles.Create(Vehicles.WARMACHINE, startX, startY, player)
+        if entityId == 0 then
+            SU.Game.ShowTextMessage("Błąd tworzenia katapulty!", player)
+            return
+        end
+
+        -- 2. Naładowanie katapulty – zakładamy, że ta funkcja istnieje
+        -- Vehicles.SetAmmo(entityId, Vehicles.AMMO_MAX)
+
+        -- -- 3. Przemieszczenie katapulty do (300,400)
+        -- Vehicles.Move(entityId, targetX, targetY)
+
+        -- dbg.stm("attackWarmachine #3")
+        -- -- 4. Atak: ustawienie trybu AI w agresywny
+        -- AI.SetCommand(entityId, AI.CMD_MOVE_AND_STAY)
+        -- AI.SetAttackMode(entityId, AI.ATTACK_MODE_AGGRESSIVE)
+
+        SU.Game.ShowTextMessage("Katapulta wysłana w trasę!", player)
+        dbg.stm("attackWarmachine #4")
+        Vars.timeToAttackWarMachine = 0
+    end
+end
+
+function tradePlayers()
+    if Game.Time() == Vars.timeToTrade then
+        --  dbg.stm("Handel")
+        -- Handel Rzymian do Trojan
+        buildingIDMarketplaceTrojan = Buildings.GetFirstBuilding(3,Buildings.MARKETPLACE)
+        buildingIDMarketplaceRzymian = Buildings.GetFirstBuilding(2,Buildings.MARKETPLACE)
+
+        SU.Buildings.SetTradingRoute(buildingIDMarketplaceRzymian,     buildingIDMarketplaceTrojan)
+        SU.Buildings.TradeGood(buildingIDMarketplaceTrojan, Goods.SUNFLOWEROIL, 32)
+        -- SU.Buildings.TradeGood(buildingIDMarketplaceTrojan, Goods.SUNFLOWEROIL, 32)
+
+        SU.Buildings.SetTradingRoute(buildingIDMarketplaceTrojan,     buildingIDMarketplaceRzymian)
+        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.COAL, 32)
+        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.IRONBAR, 16)
+
+        Vars.timeToTrade = Vars.timeToTrade + 2
+    end
+end
+function new_game()
+    Debug.DeactivateAI(5)
+    Debug.MakeDark(782,249)
+    -- Statki Majów
+    Vehicles.AddVehicle(796, 705, 4, Vehicles.WARSHIP, 1, 1, 1) 
+    Vehicles.AddVehicle(793, 675, 4, Vehicles.WARSHIP, 1, 1, 1) 
+    Vehicles.AddVehicle(807, 665, 4, Vehicles.WARSHIP, 1, 1, 1) 
+    -- Statki Wikingów
+    Vehicles.AddVehicle(901, 776, 1, Vehicles.WARSHIP, 1, 1, 1) 
+    Vehicles.AddVehicle(908, 756, 1, Vehicles.WARSHIP, 1, 1, 1) 
+    Vehicles.AddVehicle(882, 741, 1, Vehicles.WARSHIP, 1, 1, 1) 
+
+    -- Atak Rzymian na statki Wikingów i Majów
+    request_event(attackWarShip,Events.TICK)
+    
+    -- Handel
+    request_event(tradePlayers,Events.TICK)
+
+
+    -- Atak Rzymian machinami na Majów
+    -- request_event(attackWarmachine,Events.TICK)
+    AI.SetPlayerVar(1, "WarmachineMode", 5,10,20)
+    AI.SetPlayerVar(2, "WarmachineMode", 5,10,20)
+    AI.SetPlayerVar(4, "WarmachineMode", 5,10,20)
+    AI.SetPlayerVar(4, "WarmachineMode", 5,10,20)
+
+    -- Ustawinie AI dla Mrocznego Plemia  Rzymian
+    AI.NewSquad(5, AI.ATTACK_MODE_DONT_ATTACK )
+    AI.NewSquad(2, AI.DIFFICULTY_LEVEL_HARD )
+
+    -- Tworzenie Machin przez Rzymian
+    buildingIDWarmachine = Buildings.GetFirstBuilding(2,Buildings.VEHICLEHALL)
+    SU.Buildings.RecruitVehicle(buildingIDWarmachine, Vehicles.WARMACHINE, 3)
+
+    -- Magazynuj broń
+    Buildings.AddBuildingEx(257, 781, 2, Buildings.STORAGEAREA)
+    ID_StorageArea = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
+
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.SWORD, 8)
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.BOW, 8)
+
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.GOLDBAR, 48)
+
+
+
+    Game.DisableLastNPlayersInStatistic(5)
+    request_event(createGarnisonWarriors,Events.TICK)
+    request_event(PlayerGetInfoAndAttackCheck,Events.FIVE_TICKS)
+
+    dbg.stm("Lord Hagen postanowił stłumić bunt wieśniaków w imieniu króla Rohbara II.")
+ 
+
+    
+	request_event(InitVar,Events.FIRST_TICK_OF_NEW_GAME)
+
+	--request_event(victoryConditionCheck,Events.VICTORY_CONDITION_CHECK)
+
+ 
+
+    request_event(calculateCircles,Events.FIRST_TICK_OF_NEW_OR_LOADED_GAME)
+	request_event(drawCircles1,Events.TICK)
+
+	--request_event(calculateCircles,Events.FIRST_TICK_OF_NEW_OR_LOADED_GAME)
+	--request_event(drawCircles1,Events.TICK)
+    request_event(createDarkTribePlayer,Events.TICK)
+
+    request_event(deathZone,Events.FIVE_TICKS)
+
+    AI.SetPlayerVar(1, "SoldierLimitAbsolute", 500,1000,2000)
+	AI.SetPlayerVar(1, "SoldierLimitRelative", 500,1100,2000)
+
+    AI.SetPlayerVar(3, "SoldierLimitAbsolute", 500,1000,2000)
+	AI.SetPlayerVar(3, "SoldierLimitRelative", 500,1100,2000)
+
+	AI.SetPlayerVar(2, "SoldierLimitAbsolute", 500,1000,2000)
+	AI.SetPlayerVar(2, "SoldierLimitRelative", 500,1100,2000)
+
+	AI.SetPlayerVar(4, "SoldierLimitAbsolute", 500,1000,2000)
+	AI.SetPlayerVar(4, "SoldierLimitRelative", 500,1100,2000)
+
+
+   dbg.stm("Quahodron przybył z Jarkendaru by pomóc nam w walce z siłami króla.")
+
+end
+
+
+
+function createGarnisonWarriors()
+    -- if Game.Time() == Vars.timeToGarnisonWarriors then
+        -- dbg.stm("Dodawanie zolnierzy do wiezy!")
+        LastbuildingIDTower = Buildings.GetFirstBuilding(2,Buildings.GUARDTOWERSMALL)
+
+        --  dbg.stm("Dodawanie zolnierzy do wiezy!", LastbuildingIDTower)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTower)
+
+        LastbuildingIDTower2 = Buildings.GetFirstBuilding(3,Buildings.GUARDTOWERSMALL)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTower2)
+        
+        Vars.timeToGarnisonWarriors = Vars.timeToGarnisonWarriors + 5
+    -- end
+end
+function register_functions()
+    reg_func(tradePlayers)
+
+    reg_func(createGarnisonWarriors)
+    reg_func(attackWarShip)
+    -- reg_func(attackWarmachine)
+
+	reg_func(createDarkTribePlayer)
+	reg_func(InitVar)
+    reg_func(PlayerGetInfoAndAttackCheck)
+
+    reg_func(calculateCircles)
+    reg_func(drawCircles1)
+    reg_func(deathZone)
+
+end
+
+function PlayerGetInfoAndAttackCheck()
+
+	if Game.Time() == Vars.timeToAttackDarkTribe then
+			AI.AttackNow(5, 2, 50)
+            AI.AttackNow(5, 3, 20)
+
+            AI.SetPlayerVar(5, "AttackThresholdTotal", 250, 500, 1000)
+
+			Vars.timeToAttackDarkTribe = Vars.timeToAttackDarkTribe + 5 + Game.Random(5)
+
+	end
+
+end
+
+function createDarkTribePlayer()
+    if Game.Time() == Vars.timeToCreateDarkTribe then
+
+        Debug.ActivateAI(5)
+            dbg.stm("Armia ciemności przełamała magiczną barierę i wydostała się z koloni! Miej się na baczności!")
+            -- Game.ResetFogging()
+            AI.NewSquad(5, AI.ATTACK_MODE_AGGRESSIVE )
+
+
+            Map.SetScreenPos(888,502)
+            Magic.CastSpell(1, 4,Magic.SPELL_SPECIAL, 888, 502)
+            Magic.CastSpell(4, 4,Magic.SPELL_SPECIAL, 888, 502)
+
+            Magic.CastSpell(5, 3,Magic.SPELL_TERRAIN, 888, 492)
+            -- Magic.CastSpell(5, 3,Magic.SPELL_SPECIAL, 888, 492)
+            
+            Magic.CastSpell(5, 3,Magic.SPELL_TERRAIN, 860, 470)
+            -- Magic.CastSpell(5, 3,Magic.SPELL_SPECIAL, 860, 470)
+
+            Magic.CastSpell(5, 3,Magic.SPELL_TERRAIN, 843, 495)
+            --Magic.CastSpell(5, 3,Magic.SPELL_SPECIAL, 843, 495)
+
+            Magic.CastSpell(5, 3,Magic.SPELL_TERRAIN, 774, 457)
+            --Magic.CastSpell(5, 3,Magic.SPELL_SPECIAL, 774, 457)
+
+            Magic.CastSpell(5, 3,Magic.SPELL_TERRAIN, 567, 739)
+            --Magic.CastSpell(5, 3,Magic.SPELL_SPECIAL, 567, 739)
+            
+            Magic.CastSpell(5, 3,Magic.SPELL_TERRAIN, 135, 636)
+            --Magic.CastSpell(5, 3,Magic.SPELL_SPECIAL, 135, 636)
+
+
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 883,509,0)
+            Buildings.AddBuildingEx(883, 509, 5, Buildings.MUSHROOMFARM)
+
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 867,476,0)
+            Buildings.AddBuildingEx(867, 476, 5, Buildings.MUSHROOMFARM)
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 913,505,0)
+            Buildings.AddBuildingEx(913, 505, 5, Buildings.MUSHROOMFARM)
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 870,494,0)
+            Buildings.AddBuildingEx(870, 494, 5, Buildings.MUSHROOMFARM)
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 868,526,0)
+            Buildings.AddBuildingEx(868, 526, 5, Buildings.MUSHROOMFARM)
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 875,465,0)
+            Buildings.AddBuildingEx(875, 465, 5, Buildings.MUSHROOMFARM)
+            
+
+
+            AI.DarkTribeUseDarkGardeners(5,1)
+            AI.DarkTribeUseShamans(5,1)
+
+
+            Magic.IncreaseMana(5,10000)
+
+
+
+            Settlers.AddSettlers(962, 538, 5, Settlers.SWORDSMAN_01, 250)
+            Settlers.AddSettlers(962, 538, 5, Settlers.BOWMAN_01, 175)
+            
+    		Settlers.AddSettlers(962, 538, 5, Settlers.SHAMAN, 75)
+            Settlers.AddSettlers(962, 538, 5, Settlers.DARKGARDENER, 15)
+
+    		AI.NewSquad(5, AI.CMD_SUICIDE_MISSION )
+
+            AI.AttackNow(5,2,100)
+
+            AI.AttackNow(5,3, 50)
+
+            AI.AttackNow(5, 4, 25)
+            AI.AttackNow(5, 1, 25)
+
+            -- DarkTribe.AddManakopter(886,503,2)
+            -- DarkTribe.FlyTo(469,212)
+
+            -- DarkTribe.AddManakopter(886,503,2)
+            -- DarkTribe.FlyTo(735,226)
+
+
+            AI.SetPlayerVar(5, "DTMaxFarmsPerHour", 25, 50, 100)
+
+            AI.SetPlayerVar(5, "DTManakopterLimit", 4, 8, 12)
+
+
+
+            AI.SetPlayerVar(5, "SoldierLimitAbsolute", 500,1000,2000)
+            AI.SetPlayerVar(5, "SoldierLimitRelative", 500,1000,2000)
+
+        Vars.timeToCreateDarkTribe = 0
+    end
+end
+
+
+--###############################################################################################
+--# circles 
+--###############################################################################################
+-- density=1, delay=0, effectsPerTick=1, split=4, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+
+circles={
+	circle1={
+		center={x=874,y=514}, radius=75, effect=Effects.DARKFLAME, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+}
+
+function circles.calculate(_circle)
+	distance=0
+	while (distance<=(6*_circle.radius)) do
+		if distance<=_circle.radius then
+			--Calculation of coordinates on upper side of hexagon
+			_x = _circle.center.x - _circle.radius + distance
+			_y = _circle.center.y - _circle.radius
+		elseif distance<=_circle.radius*2 then
+			--Calculation of coordinates on upper right side of hexagon
+			_x = _circle.center.x - _circle.radius + distance
+			_y = _circle.center.y - (2*_circle.radius) + distance
+		elseif distance<=_circle.radius*3 then
+			--Calculation of coordinates on lower right side of hexagon
+			_x = _circle.center.x + _circle.radius
+			_y = _circle.center.y + (distance-(2*_circle.radius))
+		elseif distance<=_circle.radius*4 then
+			--Calculation of coordinates on lower side of hexagon
+			_x = _circle.center.x +(4*_circle.radius) - distance
+			_y = _circle.center.y + _circle.radius
+		elseif distance<=_circle.radius*5 then
+			--Calculation of coordinates on lower left side of hexagon
+			_x = _circle.center.x + (4*_circle.radius) - distance
+			_y = _circle.center.y + (5*_circle.radius) - distance
+		else
+			--Calculation of coordinates on upper left side of hexagon
+			_x = _circle.center.x - _circle.radius
+			_y = _circle.center.y + (5*_circle.radius) - distance
+		end
+		distance = distance + _circle.density
+		_circle.coordinates.x[_circle.effectsAmount]=_x
+		_circle.coordinates.y[_circle.effectsAmount]=_y
+		_circle.effectsAmount=_circle.effectsAmount+1
+	end
+end
+
+
+function circles.draw(_circle)
+	drawnEffects=0
+	while drawnEffects<_circle.effectsPerTick do
+		if _circle._j<_circle.split then
+			if _circle._i<_circle.effectsAmount then
+				_x=_circle.coordinates.x[_circle._i]
+				_y=_circle.coordinates.y[_circle._i]
+				Effects.AddEffect(_circle.effect, _circle.sound, _x, _y, _circle.delay)
+				_circle._i=_circle._i+_circle.split
+			else
+				_circle._j=_circle._j+1
+				_circle._i=_circle._j
+			end
+		else
+			_circle._j=0
+		end
+		drawnEffects=drawnEffects+1
+	end
+end
+
+function calculateCircles()
+	circles.calculate(circles.circle1)
+end
+
+function drawCircles1()
+    if Game.Time() < Vars.timeToCreateDarkTribe then
+        circles.draw(circles.circle1)
+        -- circles.draw(circles.circle1)
+        -- circles.draw(circles.circle1)
+    else
+        unrequest_event(drawCircles1,Events.TICK)
+    end
+end
