@@ -7,7 +7,8 @@ function InitVar()
     Vars.timeToAttackWarShip = 1
     Vars.timeToGarnisonWarriors = 5
     Vars.timeToTrade = 2
-
+    Vars.createNextStoreageBuilding = 10
+    Vars.createNextLargeTowerOrCastleBuilding = 10
 end
 
 
@@ -110,23 +111,114 @@ function tradePlayers()
         -- SU.Buildings.TradeGood(buildingIDMarketplaceTrojan, Goods.SUNFLOWEROIL, 32)
 
         SU.Buildings.SetTradingRoute(buildingIDMarketplaceTrojan,     buildingIDMarketplaceRzymian)
-        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.COAL, 32)
-        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.IRONBAR, 16)
+        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.BREAD, 32)
+        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.MEAT, 16)
+        SU.Buildings.TradeGood(buildingIDMarketplaceRzymian, Goods.FISH, 8) 
 
         Vars.timeToTrade = Vars.timeToTrade + 2
     end
 end
+
+function createStoreage()
+    if Game.Time() == Vars.createNextStoreageBuilding then
+        
+        buildingIdStorage = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
+
+        if Game.Random100() >= 50 then
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.WINE, 8)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 8)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 24)
+        else
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.BOARD, 16)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 16)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 16)
+        end
+        
+        if Buildings.Amount(2, Buildings.STORAGEAREA, Buildings.READY) < 6 then
+            ID_StorageAreaNew = Buildings.AddConstructionSiteEx(257, 781, 2, Buildings.STORAGEAREA)
+        end
+        
+            SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.WINE, 8)
+            SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.IRONBAR, 8)
+            SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(ID_StorageArea, Goods.GOLDBAR, 24)
+            -- SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.GOLDBAR, 24)
+
+            Vars.createNextStoreageBuilding = Vars.createNextStoreageBuilding + 30
+    end
+end
+
+
+function creatLargeTowerOrCastle()
+    if Game.Time() == Vars.createNextLargeTowerOrCastleBuilding then
+        if Buildings.Amount(3, Buildings.CASTLE, Buildings.READY) < 30 then
+            if Game.Random100() > 50 then
+               newBuilding = Buildings.AddConstructionSiteEx(465, 490, 3, Buildings.CASTLE, 50)
+            else
+               newBuilding = Buildings.AddConstructionSiteEx(462, 454, 3, Buildings.GUARDTOWERBIG, 50)
+            end
+        else
+        end
+            SU.Buildings.GarrisonWarriors(newBuilding)
+            Vars.createNextLargeTowerOrCastleBuilding = Vars.createNextLargeTowerOrCastleBuilding + 5
+    end
+end
 function new_game()
+
+    -- -- Tworzenie katapulty (warmachine) dla gracza 2 w punkcie 100x200
+    -- vehicleID = Vehicles.AddVehicle(254, 715, 2, Vehicles.WARMACHINE, 2, 80, 1)
+
+    -- -- Sprawdzenie czy pojazd został poprawnie utworzony
+    -- if vehicleID then
+    --     dbg.stm("ok 1")
+    --     -- AI.NewSquad(2, AI.CMD_MOVE_AND_STAY, 901,756)
+        
+    --     vehicle = SU.Entity.GetUniqueID(vehicleID)
+    --     if vehicle then
+    --         dbg.stm("ok 2")
+    --         -- Wydanie rozkazu ruchu do punktu 200x300
+    --         AI.NewSquad(2, AI.CMD_MOVE_AND_STAY, 791,256)
+    --     else
+    --     end
+    -- else
+    --     dbg.stm("ok 4")
+    -- end
+    -- dbg.stm("ok 5")
+    -- thiefID = Settlers.AddSettlers( 254, 715, 2, Settlers.THIEF, 2)
+
+    -- -- Jeśli udało się stworzyć, przekażemy mu polecenie ruchu:
+    -- if thiefID then
+    --     dbg.stm("ok 1")
+
+    --     -- Przemieszczamy jednostkę: używamy SU.Entity i komendy OrderMove
+    --     ent = SU.Entity.Get(thiefID)
+    --     if ent then
+    --         dbg.stm("ok 2")
+    --         ent:OrderMoveTo(791, 256)
+    --         dbg.stm("ok 3")
+    --     end
+    -- end
+
+    -- Settlers.AddSettlers(254, 715, 2, Settlers.THIEF, 3)
+    -- Settlers.AddSettlers(254, 715, 3, Settlers.THIEF, 3)
+    -- AI.NewSquad(2, CMD_MOVE_AND_STAY, 791,256)
+    -- AI.NewSquad(3, CMD_MOVE_AND_STAY, 791,256)
+
     Debug.DeactivateAI(5)
-    Debug.MakeDark(782,249)
+    -- Debug.MakeDark(782,249)
     -- Statki Majów
-    Vehicles.AddVehicle(796, 705, 4, Vehicles.WARSHIP, 1, 1, 1) 
-    Vehicles.AddVehicle(793, 675, 4, Vehicles.WARSHIP, 1, 1, 1) 
-    Vehicles.AddVehicle(807, 665, 4, Vehicles.WARSHIP, 1, 1, 1) 
+    Vehicles.AddVehicle(796, 705, 4, Vehicles.WARSHIP, 1, 80, 1) 
+    Vehicles.AddVehicle(793, 675, 4, Vehicles.WARSHIP, 1, 80, 1) 
+    Vehicles.AddVehicle(807, 665, 4, Vehicles.WARSHIP, 1, 80, 1) 
     -- Statki Wikingów
-    Vehicles.AddVehicle(901, 776, 1, Vehicles.WARSHIP, 1, 1, 1) 
-    Vehicles.AddVehicle(908, 756, 1, Vehicles.WARSHIP, 1, 1, 1) 
-    Vehicles.AddVehicle(882, 741, 1, Vehicles.WARSHIP, 1, 1, 1) 
+    Vehicles.AddVehicle(901, 776, 1, Vehicles.WARSHIP, 1, 80, 1) 
+    Vehicles.AddVehicle(908, 756, 1, Vehicles.WARSHIP, 1, 80, 1) 
+    Vehicles.AddVehicle(882, 741, 1, Vehicles.WARSHIP, 1, 80, 1) 
 
     -- Atak Rzymian na statki Wikingów i Majów
     request_event(attackWarShip,Events.TICK)
@@ -137,32 +229,32 @@ function new_game()
 
     -- Atak Rzymian machinami na Majów
     -- request_event(attackWarmachine,Events.TICK)
-    AI.SetPlayerVar(1, "WarmachineMode", 5,10,20)
-    AI.SetPlayerVar(2, "WarmachineMode", 5,10,20)
-    AI.SetPlayerVar(4, "WarmachineMode", 5,10,20)
-    AI.SetPlayerVar(4, "WarmachineMode", 5,10,20)
+    AI.SetPlayerVar(1, "WarmachineMode", 1,2,5)
+    AI.SetPlayerVar(2, "WarmachineMode", 1,2,5)
+    AI.SetPlayerVar(3, "WarmachineMode", 1,2,5)
+    AI.SetPlayerVar(4, "WarmachineMode", 1,2,5)
 
     -- Ustawinie AI dla Mrocznego Plemia  Rzymian
-    AI.NewSquad(5, AI.ATTACK_MODE_DONT_ATTACK )
     AI.NewSquad(2, AI.DIFFICULTY_LEVEL_HARD )
 
     -- Tworzenie Machin przez Rzymian
     buildingIDWarmachine = Buildings.GetFirstBuilding(2,Buildings.VEHICLEHALL)
-    SU.Buildings.RecruitVehicle(buildingIDWarmachine, Vehicles.WARMACHINE, 3)
+    newVehicle = SU.Buildings.RecruitVehicle(buildingIDWarmachine, Vehicles.WARMACHINE, 3)
+    --AI.NewSquad(2, AI.CMD_MOVE_AND_STAY,  788, 263 )
 
     -- Magazynuj broń
     Buildings.AddBuildingEx(257, 781, 2, Buildings.STORAGEAREA)
     ID_StorageArea = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
 
-    SU.Buildings.StoreGood(ID_StorageArea, Goods.SWORD, 8)
-    SU.Buildings.StoreGood(ID_StorageArea, Goods.BOW, 8)
-
-    SU.Buildings.StoreGood(ID_StorageArea, Goods.GOLDBAR, 48)
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.STONE, 32)
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.BOARD, 32)
 
 
 
     Game.DisableLastNPlayersInStatistic(5)
     request_event(createGarnisonWarriors,Events.TICK)
+    request_event(createStoreage,Events.TICK)
+    request_event(creatLargeTowerOrCastle, Events.TICK)
     request_event(PlayerGetInfoAndAttackCheck,Events.FIVE_TICKS)
 
     dbg.stm("Lord Hagen postanowił stłumić bunt wieśniaków w imieniu króla Rohbara II.")
@@ -206,18 +298,36 @@ end
 function createGarnisonWarriors()
     -- if Game.Time() == Vars.timeToGarnisonWarriors then
         -- dbg.stm("Dodawanie zolnierzy do wiezy!")
-        LastbuildingIDTower = Buildings.GetFirstBuilding(2,Buildings.GUARDTOWERSMALL)
 
         --  dbg.stm("Dodawanie zolnierzy do wiezy!", LastbuildingIDTower)
+
+        --Gracz 2
+        LastbuildingIDTower = Buildings.GetFirstBuilding(2,Buildings.GUARDTOWERSMALL)
         SU.Buildings.GarrisonWarriors(LastbuildingIDTower)
+
+         LastbuildingIDTowerBig = Buildings.GetFirstBuilding(2,Buildings.GUARDTOWERBIG)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig)
+
+        LastbuildingIDCastle = Buildings.GetFirstBuilding(2,Buildings.CASTLE)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDCastle)
+
+        -- Gracz 3
 
         LastbuildingIDTower2 = Buildings.GetFirstBuilding(3,Buildings.GUARDTOWERSMALL)
         SU.Buildings.GarrisonWarriors(LastbuildingIDTower2)
+
+        LastbuildingIDTowerBig2 = Buildings.GetFirstBuilding(3,Buildings.GUARDTOWERBIG)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig2)
+
+        LastbuildingIDCastle2 = Buildings.GetFirstBuilding(3,Buildings.CASTLE)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDCastle2)
         
         Vars.timeToGarnisonWarriors = Vars.timeToGarnisonWarriors + 5
     -- end
 end
 function register_functions()
+    reg_func(creatLargeTowerOrCastle)
+    reg_func(createStoreage)
     reg_func(tradePlayers)
 
     reg_func(createGarnisonWarriors)
@@ -322,8 +432,8 @@ function createDarkTribePlayer()
 
             AI.AttackNow(5,3, 50)
 
-            AI.AttackNow(5, 4, 25)
-            AI.AttackNow(5, 1, 25)
+            -- AI.AttackNow(5, 4, 25)
+            -- AI.AttackNow(5, 1, 25)
 
             -- DarkTribe.AddManakopter(886,503,2)
             -- DarkTribe.FlyTo(469,212)
