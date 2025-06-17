@@ -9,6 +9,8 @@ function InitVar()
     Vars.timeToTrade = 2
     Vars.createNextStoreageBuilding = 10
     Vars.createNextLargeTowerOrCastleBuilding = 10
+    Vars.timeToControlBuildings = 1
+    Vars.spawnSupportBeforeAttackDarkTribe = 0
 end
 
 
@@ -122,24 +124,12 @@ end
 function createStoreage()
     if Game.Time() == Vars.createNextStoreageBuilding then
         
-        buildingIdStorage = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
-
-        if Game.Random100() >= 50 then
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.WINE, 8)
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 8)
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
-
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 24)
-        else
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.BOARD, 16)
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 16)
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
-
-            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 16)
+        if Buildings.Amount(2, Buildings.STORAGEAREA, Buildings.READY) < 9 then
+            ID_StorageAreaNew = Buildings.AddConstructionSiteEx(257, 781, 2, Buildings.STORAGEAREA, 74)
         end
-        
-        if Buildings.Amount(2, Buildings.STORAGEAREA, Buildings.READY) < 6 then
-            ID_StorageAreaNew = Buildings.AddConstructionSiteEx(257, 781, 2, Buildings.STORAGEAREA)
+
+        if Buildings.Amount(3, Buildings.STORAGEAREA, Buildings.READY) < 4 then
+            ID_StorageAreaNew3 = Buildings.AddConstructionSiteEx(276, 390, 3, Buildings.STORAGEAREA, 74)
         end
         
             SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.WINE, 8)
@@ -149,7 +139,7 @@ function createStoreage()
             SU.Buildings.StoreGood(ID_StorageArea, Goods.GOLDBAR, 24)
             -- SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.GOLDBAR, 24)
 
-            Vars.createNextStoreageBuilding = Vars.createNextStoreageBuilding + 30
+            Vars.createNextStoreageBuilding = Vars.createNextStoreageBuilding + 20
     end
 end
 
@@ -220,6 +210,9 @@ function new_game()
     Vehicles.AddVehicle(908, 756, 1, Vehicles.WARSHIP, 1, 80, 1) 
     Vehicles.AddVehicle(882, 741, 1, Vehicles.WARSHIP, 1, 80, 1) 
 
+    -- Kontrola budynków
+    request_event(controlBuildings,Events.TICK)
+
     -- Atak Rzymian na statki Wikingów i Majów
     request_event(attackWarShip,Events.TICK)
     
@@ -233,6 +226,14 @@ function new_game()
     AI.SetPlayerVar(2, "WarmachineMode", 1,2,5)
     AI.SetPlayerVar(3, "WarmachineMode", 1,2,5)
     AI.SetPlayerVar(4, "WarmachineMode", 1,2,5)
+
+
+    --- Pionierzy
+    AI.SetPlayerVar(1, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(2, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(3, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(4, "UsePioneers", 5,10,15)
+
 
     -- Ustawinie AI dla Mrocznego Plemia  Rzymian
     AI.NewSquad(2, AI.DIFFICULTY_LEVEL_HARD )
@@ -326,6 +327,7 @@ function createGarnisonWarriors()
     -- end
 end
 function register_functions()
+    reg_func(controlBuildings)
     reg_func(creatLargeTowerOrCastle)
     reg_func(createStoreage)
     reg_func(tradePlayers)
@@ -344,9 +346,66 @@ function register_functions()
 
 end
 
+function controlBuildings()
+    if Game.Time() == Vars.timeToControlBuildings then
+        buildingIdStorage = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
+
+        if Game.Random100() >= 50 then
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.WINE, 8)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 8)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 24)
+        else
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.BOARD, 16)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 16)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 16)
+        end
+
+        buildingIdStorage3 = Buildings.GetFirstBuilding(3,Buildings.STORAGEAREA)
+
+        if Game.Random100() >= 50 then
+            SU.Buildings.StoreGood(buildingIdStorage3, Goods.GOLDORE, 16)
+            SU.Buildings.StoreGood(buildingIdStorage3, Goods.IRONORE, 16)
+            SU.Buildings.StoreGood(buildingIdStorage3, Goods.FISH, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.BOARD, 16)
+        else
+            SU.Buildings.StoreGood(buildingIdStorage3, Goods.STONE, 32)
+            SU.Buildings.StoreGood(buildingIdStorage3, Goods.IRONORE, 16)
+            SU.Buildings.StoreGood(buildingIdStorage3, Goods.FISH, 8)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.BOARD, 8)
+        end
+
+            Vars.timeToControlBuildings = Vars.timeToControlBuildings + 1
+    end
+end
 function PlayerGetInfoAndAttackCheck()
 
 	if Game.Time() == Vars.timeToAttackDarkTribe then
+
+            if Vars.spawnSupportBeforeAttackDarkTribe == 0 then
+                dbg.stm("Orkowie ruszyli na Khorinis. Bądź ostrożny. Kapitan Greg waysłał kilka okrętów wojennych, a na polecenie Quahodron kasta wojowników przybyła z Jarkendaru.")
+
+                Map.SetScreenPos(954,105)
+                Vehicles.AddVehicle(954, 105, 1, Vehicles.WARSHIP, 1, 80, 1)
+                Vehicles.AddVehicle(946, 98, 1, Vehicles.WARSHIP, 1, 80, 1)
+                Vehicles.AddVehicle(950, 100, 1, Vehicles.WARSHIP, 1, 80, 1)
+
+                Magic.IncreaseMana(1,100)
+                Magic.IncreaseMana(4,100)
+
+                Settlers.AddSettlers(356, 143, 4, Settlers.SQUADLEADER, 1)
+                Settlers.AddSettlers(356, 143, 4, Settlers.BOWMAN_03, 50)
+
+                AI.NewSquad(4, AI.CMD_SUICIDE_MISSION )
+
+                Vars.spawnSupportBeforeAttackDarkTribe = Vars.spawnSupportBeforeAttackDarkTribe + 1
+            end
+
 			AI.AttackNow(5, 2, 50)
             AI.AttackNow(5, 3, 20)
 
