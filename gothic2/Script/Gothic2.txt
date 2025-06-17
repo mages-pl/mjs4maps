@@ -146,11 +146,21 @@ end
 
 function creatLargeTowerOrCastle()
     if Game.Time() == Vars.createNextLargeTowerOrCastleBuilding then
+
+        -- Wyjatkowo dla Trojan buduj medyków przy zamkach
+        if Buildings.Amount(3, Buildings.HEALERHUT, Buildings.READY) < 4 then
+            if Game.Random100() > 50 then
+                Buildings.AddConstructionSiteEx(491, 470, 3, Buildings.HEALERHUT, 32)
+            else
+                Buildings.AddConstructionSiteEx(470, 496, 3, Buildings.HEALERHUT, 32)    
+            end
+        end
+
         if Buildings.Amount(3, Buildings.CASTLE, Buildings.READY) < 30 then
             if Game.Random100() > 50 then
                newBuilding = Buildings.AddConstructionSiteEx(465, 490, 3, Buildings.CASTLE, 50)
             else
-               newBuilding = Buildings.AddConstructionSiteEx(462, 454, 3, Buildings.GUARDTOWERBIG, 50)
+               newBuilding = Buildings.AddConstructionSiteEx(462, 454, 3, Buildings.GUARDTOWERBIG, 60)
             end
         else
         end
