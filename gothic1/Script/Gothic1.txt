@@ -1,0 +1,978 @@
+-- 	EffectCircle(105,130,74,3, Effects.MAGIC_PILE02,2)
+
+function InitVar()
+    Vars.possibleSlepperConquer = 0
+    Vars.timeCreateFreeMineCamp = 93
+    Vars.timeToCreateCorKalom = 30
+	Vars.timeToCreateDarkTribe = 45
+    Vars.timeToAttackDarkTribe = 85
+    Vars.timeToGarnisonWarriors = 5
+    Vars.timeToTrade = 2
+    Vars.createNextStoreageBuilding = 10
+    Vars.createNextLargeTowerOrCastleBuilding = 10
+    Vars.timeToControlBuildings = 1
+    Vars.spawnSupportBeforeAttackDarkTribe = 0
+    Vars.timeToAttackCorKalom = 31
+    Vars.timeToAttackGomez = 95
+    Vars.possibleXardasHelp = 0
+    Vars.kamienieOgniskujace = 0
+end
+function victoryConditionCheck()
+
+	if Buildings.Amount(4, Buildings.DARKTEMPLE, Buildings.READY) == 0 then
+		Game.PlayerLost(2)
+		Game.PlayerLost(4)
+		Game.PlayerLost(5)
+        Game.PlayerLost(7)
+
+		Game.DefaultGameEndCheck()
+	else
+
+    end
+end
+function evilGomez()
+    if Game.Time() > 120 then
+       if Game.FindAnyUnit(1, 532, 310, 50) == 1  or Game.FindAnyUnit(3,  532, 310, 50) == 1  or Game.FindAnyUnit(4,  591, 310, 50) == 1 or Game.FindAnyUnit(5,  532, 310, 50) == 1 or Game.FindAnyUnit(6,  532, 310, 50) == 1 
+       or Game.FindAnyUnit(1, 544, 436, 50) == 1  or Game.FindAnyUnit(3,   544, 436,  50) == 1 or Game.FindAnyUnit(4,  544, 436,  50) == 1 or Game.FindAnyUnit(5,   544, 436,  50) == 1 or Game.FindAnyUnit(6,   544, 436, 50) == 1   
+       or Game.FindAnyUnit(1,   745, 460, 50) == 1  or Game.FindAnyUnit(3,   745, 460, 50) == 1  or Game.FindAnyUnit(4,   745, 460, 50) == 1 or Game.FindAnyUnit(5,  745, 460, 50) == 1 or Game.FindAnyUnit(6,  745, 460, 50) == 1 
+       or Game.FindAnyUnit(1,   750, 333, 50) == 1  or Game.FindAnyUnit(3,   750, 333, 50) == 1  or Game.FindAnyUnit(4,   750, 333, 50) == 1 or Game.FindAnyUnit(5,  750, 333, 50) == 1 or Game.FindAnyUnit(6,  750, 333, 50) == 1  then
+        dbg.stm("Gomez w szale na atak na Stary Oboz zwerbował swoich siepaczy. Miej się na baczności!")
+
+        SU.Settlers.AddSettlersWithBeds(594, 397, 2, Settlers.CARRIER, 400)
+
+        Settlers.AddSettlers(594, 397, 2, Settlers.PRIEST, 6)
+        Settlers.AddSettlers(594, 397, 2, Settlers.SQUADLEADER, 6)
+        Settlers.AddSettlers(594, 397, 2, Settlers.BOWMAN_03, 250)
+        Settlers.AddSettlers(594, 397, 2, Settlers.SWORDSMAN_03, 250)
+
+        AI.NewSquad(2, AI.CMD_SUICIDE_MISSION )
+        unrequest_event(evilGomez,Events.TICK)
+        else
+        end
+    end
+end
+function createFreeMineCamp()
+    if Game.Time() == Vars.timeCreateFreeMineCamp then
+
+        wieza1 = Buildings.AddBuildingEx(167, 692, 2, Buildings.GUARDTOWERBIG)
+        wieza2 = Buildings.AddBuildingEx(145, 691, 2, Buildings.CASTLE)
+        wieza3 = Buildings.AddBuildingEx(206, 780, 2, Buildings.GUARDTOWERBIG)
+        wieza4 =  Buildings.AddBuildingEx(145, 736, 2, Buildings.CASTLE)
+        wieza5 = Buildings.AddBuildingEx(224, 750, 2, Buildings.GUARDTOWERBIG)
+        wieza6 =   Buildings.AddBuildingEx(186, 736, 2, Buildings.GUARDTOWERBIG)
+
+        SU.Buildings.GarrisonWarriors(wieza1)
+        SU.Buildings.GarrisonWarriors(wieza2)
+        SU.Buildings.GarrisonWarriors(wieza3)
+        SU.Buildings.GarrisonWarriors(wieza4)
+        SU.Buildings.GarrisonWarriors(wieza5)
+        SU.Buildings.GarrisonWarriors(wieza6)
+
+        Settlers.AddSettlers(185, 730, 2, Settlers.PRIEST, 3)
+        Settlers.AddSettlers(185, 730, 2, Settlers.SQUADLEADER, 3)
+        Settlers.AddSettlers(185, 730, 2, Settlers.BOWMAN_03, 50)
+        Settlers.AddSettlers(185, 730, 2, Settlers.SWORDSMAN_03, 70)
+        Settlers.AddSettlers(185, 730, 2, Settlers.MEDIC_03, 20)
+
+
+        Settlers.AddSettlers(587, 378, 2, Settlers.BOWMAN_03, 150)
+        Settlers.AddSettlers(587, 378, 2, Settlers.SWORDSMAN_03, 180)
+        Settlers.AddSettlers(587, 378, 2, Settlers.MEDIC_03, 50)
+
+        AI.NewSquad(2, AI.DIFFICULTY_LEVEL_HARD )
+        AI.NewSquad(2, AI.CMD_SUICIDE_MISSION )
+        
+        AI.AttackNow(2,1,100)
+
+        AI.AttackNow(2,1, 50)
+
+        dbg.stm("Gomez ruszył na Wolną Kopalnie chcąc utrzymać ciągłość dostaw surowców. Zniszcz jego przyczółek.")
+
+        Vars.timeCreateFreeMineCamp = 0
+    end
+end
+function createCorKalom()
+    if Game.Time() == Vars.timeToCreateCorKalom then
+        dbg.stm("Cor-Kalom wraz z swoimi poplecznikami odłączył się od obozu Bractwa zakładjąc własną osadę i próbuje przejąć schedę po Y'Berionie. Pokonaj jego wyznawców, którzy chcą obudzić Śniącego!")
+
+        -- Map.SetScreenPos(737,821)
+        -- Magic.CastSpell(1, 3,Magic.SPELL_SPECIAL, 737, 821)
+        -- Magic.CastSpell(3, 3,Magic.SPELL_SPECIAL, 737, 821)
+        -- Magic.CastSpell(6, 3,Magic.SPELL_SPECIAL, 737, 821)
+
+        Magic.IncreaseMana(5,1000)
+
+        -- Wieze
+        wieza1 = Buildings.AddBuildingEx(761, 927, 5, Buildings.GUARDTOWERBIG)
+        wieza2 = Buildings.AddBuildingEx(717, 887, 5, Buildings.GUARDTOWERBIG)
+        wieza3 = Buildings.AddBuildingEx(717, 855, 5, Buildings.GUARDTOWERBIG)
+        wieza4 =  Buildings.AddBuildingEx(704, 805, 5, Buildings.GUARDTOWERBIG)
+        wieza5 = Buildings.AddBuildingEx(754, 824, 5, Buildings.GUARDTOWERBIG)
+        wieza6 =   Buildings.AddBuildingEx(776, 798, 5, Buildings.GUARDTOWERBIG)
+
+
+
+        -- Kopalnie
+        Buildings.AddBuildingEx(701, 774, 5, Buildings.COALMINE)
+        Buildings.AddBuildingEx(703, 831, 5, Buildings.GOLDMINE)
+        Buildings.AddBuildingEx(705, 886, 5, Buildings.IRONMINE)
+        Buildings.AddBuildingEx(749, 781, 5, Buildings.STONEMINE)
+        Buildings.AddBuildingEx(699, 846, 5, Buildings.COALMINE)
+        Buildings.AddBuildingEx(707, 865, 5, Buildings.COALMINE)
+
+        -- Obrobka metali
+        Buildings.AddBuildingEx(718, 866, 5, Buildings.SMELTIRON)
+        Buildings.AddBuildingEx(721, 898, 5, Buildings.WEAPONSMITH)
+        Buildings.AddBuildingEx(735, 931, 5, Buildings.TOOLSMITH)
+        Buildings.AddBuildingEx(731, 902, 5, Buildings.SMELTGOLD)
+
+        -- Koszary
+        Buildings.AddBuildingEx(740, 867, 5, Buildings.BARRACKS)
+
+        -- Rezydencje
+
+        Buildings.AddBuildingEx(784, 927, 5, Buildings.RESIDENCEBIG)
+
+        -- Jedzenie
+        Buildings.AddBuildingEx(763, 912, 5, Buildings.FISHERHUT)
+        Buildings.AddBuildingEx(757, 900, 5, Buildings.FISHERHUT)
+
+        -- Surowce (kamień drewno narzedzia mineraly i koniecznie duzo jedzenia)
+        addSupplies(743, 888, Goods.STONE, 48)
+        addSupplies(744, 887, Goods.BOARD, 48)
+        addSupplies(745, 888, Goods.HAMMER, 12)
+        addSupplies(746, 886, Goods.SHOVEL, 12)
+        addSupplies(747, 885, Goods.PICKAXE, 16)
+        addSupplies(748, 889, Goods.SAW, 4)
+        addSupplies(749, 888, Goods.AXE, 10)
+        addSupplies(741, 889, Goods.SCYTHE, 3)
+        addSupplies(739, 887, Goods.FISH, 48)
+        addSupplies(737, 886, Goods.BREAD, 48)
+        addSupplies(741, 885, Goods.MEAT, 64)
+        addSupplies(741, 885, Goods.ROD, 4)
+
+        -- Ludzie
+        SU.Settlers.AddSettlersWithBeds(738, 875, 5, Settlers.CARRIER, 200)
+
+        Debug.ActivateAI(5)
+
+        Settlers.AddSettlers(736, 911, 5, Settlers.PRIEST, 1)
+        Settlers.AddSettlers(736, 911, 5, Settlers.SQUADLEADER, 1)
+
+         Settlers.AddSettlers(747, 809, 5, Settlers.BOWMAN_03, 6)
+        Settlers.AddSettlers(747, 809, 5, Settlers.SWORDSMAN_03, 8)
+
+        Settlers.AddSettlers(736, 911, 5, Settlers.BOWMAN_03, 10)
+        Settlers.AddSettlers(736, 911, 5, Settlers.SWORDSMAN_03, 8)
+        Settlers.AddSettlers(736, 911, 5, Settlers.BLOWGUNWARRIOR_03, 5)
+
+
+        AI.NewSquad(5, AI.DIFFICULTY_LEVEL_HARD )
+        AI.NewSquad(5, AI.ATTACK_MODE_AGGRESSIVE)
+
+
+        SU.Buildings.GarrisonWarriors(wieza1)
+        SU.Buildings.GarrisonWarriors(wieza2)
+        SU.Buildings.GarrisonWarriors(wieza3)
+        SU.Buildings.GarrisonWarriors(wieza4)
+        SU.Buildings.GarrisonWarriors(wieza5)
+        SU.Buildings.GarrisonWarriors(wieza6)
+
+        Vars.timeToCreateCorKalom = 0
+    end
+end
+
+function PlayerCorKalomGetInfoAndAttackCheck()
+	if Game.Time() == Vars.timeToAttackCorKalom then
+
+             AI.NewSquad(5, AI.CMD_SUICIDE_MISSION )
+
+			AI.AttackNow(5, 3, 50)
+            AI.AttackNow(5, 3, 20)
+
+            AI.SetPlayerVar(5, "AttackThresholdTotal", 250, 500, 1000)
+
+			Vars.timeToAttackCorKalom = Vars.timeToAttackCorKalom + 5 + Game.Random(5)
+	end 
+end
+
+function PlayerGomezGetInfoAndAttackCheck()
+	if Game.Time() == Vars.timeToAttackGomez then
+
+             AI.NewSquad(2, AI.CMD_SUICIDE_MISSION )
+
+			AI.AttackNow(2, 1, 50)
+            AI.AttackNow(2, 6, 20)
+
+            AI.SetPlayerVar(2, "AttackThresholdTotal", 250, 500, 1000)
+
+			Vars.timeToAttackGomez = Vars.timeToAttackGomez + 5 + Game.Random(5)
+	end 
+end
+function addSupplies(X, Y, goodtype, amount)
+	local i = 0
+	while i < amount do
+		if (amount-i) < 8 then
+			Goods.AddPileEx(X, Y, goodtype, (amount-i))
+			i = i + amount
+		else
+			Goods.AddPileEx(X, Y, goodtype, 8)
+			i = i + 8
+		end
+	end
+end
+
+function deathZoneXardas()
+      if 0 == Vars.possibleXardasHelp then
+        -- dbg.stm("Magiczna nad górniczą doliną nie pozwala nam przejść dalej.")
+		Settlers.KillSelectableSettlers(1,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(1,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(1,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+        Settlers.KillSelectableSettlers(2,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(2,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(2,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+        Settlers.KillSelectableSettlers(3,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(3,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(3,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+        Settlers.KillSelectableSettlers(4,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(4,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(4,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+        Settlers.KillSelectableSettlers(5,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(5,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(5,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+        Settlers.KillSelectableSettlers(6,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(6,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(6,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+        Settlers.KillSelectableSettlers(7,-1,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2),1)
+		Vehicles.KillVehicles(7,Vehicles.WARMACHINE,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+		Vehicles.KillVehicles(7,Vehicles.CART,circles.circleXardas.center.x,circles.circleXardas.center.y,(circles.circleXardas.radius-2))
+
+    else
+        unrequest_event(deathZoneXardas,Events.FIVE_TICKS)
+    end
+end
+function deathZoneSleepper()
+    if 0 ==  Vars.possibleSlepperConquer then
+        -- dbg.stm("Magiczna nad górniczą doliną nie pozwala nam przejść dalej.")
+		Settlers.KillSelectableSettlers(1,-1,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2),1)
+		Vehicles.KillVehicles(1,Vehicles.WARMACHINE,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+		Vehicles.KillVehicles(1,Vehicles.CART,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+
+        Settlers.KillSelectableSettlers(2,-1,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2),1)
+		Vehicles.KillVehicles(2,Vehicles.WARMACHINE,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+		Vehicles.KillVehicles(2,Vehicles.CART,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+
+
+        Settlers.KillSelectableSettlers(3,-1,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2),1)
+		Vehicles.KillVehicles(3,Vehicles.WARMACHINE,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+		Vehicles.KillVehicles(3,Vehicles.CART,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+
+
+        Settlers.KillSelectableSettlers(6,-1,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2),1)
+		Vehicles.KillVehicles(6,Vehicles.WARMACHINE,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+		Vehicles.KillVehicles(6,Vehicles.CART,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+
+        Settlers.KillSelectableSettlers(7,-1,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2),1)
+		Vehicles.KillVehicles(7,Vehicles.WARMACHINE,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+		Vehicles.KillVehicles(7,Vehicles.CART,circles.circleSleepper.center.x,circles.circleSleepper.center.y,(circles.circleSleepper.radius-2))
+    else
+        unrequest_event(deathZoneSleepper,Events.FIVE_TICKS)
+    end
+end
+
+function tradePlayers()
+    if Game.Time() == Vars.timeToTrade then
+        --  dbg.stm("Handel")
+        -- Handel Gomeza z Ianem
+        buildingIDMarketplaceIan = Buildings.GetFirstBuilding(7,Buildings.MARKETPLACE)
+        buildingIDMarketplaceGomez = Buildings.GetFirstBuilding(2,Buildings.MARKETPLACE)
+
+        SU.Buildings.SetTradingRoute(buildingIDMarketplaceIan,  buildingIDMarketplaceGomez)
+        SU.Buildings.TradeGood(buildingIDMarketplaceIan, Goods.IRONBAR, 16)
+        SU.Buildings.TradeGood(buildingIDMarketplaceIan, Goods.IRONORE, 32)
+        SU.Buildings.TradeGood(buildingIDMarketplaceIan, Goods.GOLDORE, 32)
+        SU.Buildings.TradeGood(buildingIDMarketplaceIan, Goods.GOLDBAR, 16)
+
+        SU.Buildings.SetTradingRoute(buildingIDMarketplaceGomez,     buildingIDMarketplaceIan)
+        SU.Buildings.TradeGood(buildingIDMarketplaceGomez, Goods.BREAD, 32)
+        SU.Buildings.TradeGood(buildingIDMarketplaceGomez, Goods.MEAT, 16)
+        SU.Buildings.TradeGood(buildingIDMarketplaceGomez, Goods.FISH, 8) 
+        SU.Buildings.TradeGood(buildingIDMarketplaceGomez, Goods.FISH, 8) 
+
+        Vars.timeToTrade = Vars.timeToTrade + 2
+    end
+end
+
+function createStoreage()
+    if Game.Time() == Vars.createNextStoreageBuilding then
+        
+        -- Gomez
+        if Buildings.Amount(2, Buildings.STORAGEAREA, Buildings.READY) < 12 then
+            ID_StorageAreaNew = Buildings.AddConstructionSiteEx(626, 428, 2, Buildings.STORAGEAREA, 74)
+        end
+
+        -- Ian
+        if Buildings.Amount(7, Buildings.STORAGEAREA, Buildings.READY) < 4 then
+            ID_StorageAreaNew7 = Buildings.AddConstructionSiteEx(121, 121, 7, Buildings.STORAGEAREA, 74)
+        end
+        
+        SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.BOARD, 8)
+        SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.STONE, 8)
+        SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.IRONBAR, 8)
+        SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.COAL, 16)
+        SU.Buildings.StoreGood(ID_StorageAreaNew, Goods.GOLDBAR, 8)
+
+        Vars.createNextStoreageBuilding = Vars.createNextStoreageBuilding + 15
+    end
+end
+
+
+function creatLargeTowerOrCastle()
+    if Game.Time() == Vars.createNextLargeTowerOrCastleBuilding then
+
+        -- Jako Gomez okopuj się w kluczowych punktach zamkami i wiezami
+        -- if Buildings.Amount(2, Buildings.HEALERHUT, Buildings.READY) < 4 then
+        --     if Game.Random100() > 50 then
+        --         Buildings.AddConstructionSiteEx(491, 470, 3, Buildings.HEALERHUT, 32)
+        --     else
+        --         Buildings.AddConstructionSiteEx(470, 496, 3, Buildings.HEALERHUT, 32)    
+        --     end
+        -- end
+        if Game.Random100() > 50 then
+            rezydencja =  Buildings.AddBuildingEx(789, 338, 2, Buildings.RESIDENCEBIG)
+        else
+            rezydencja =  Buildings.AddBuildingEx(508, 430, 2, Buildings.RESIDENCEBIG)
+        end
+
+        if Buildings.Amount(2, Buildings.CASTLE, Buildings.READY) < 20 then
+            if Game.Random100() >= 50 and Game.Random100() <= 75 then
+                if Game.Random100() > 50 then
+                    newBuilding = Buildings.AddConstructionSiteEx(760, 474, 2, Buildings.CASTLE, 50)
+                else
+                    newBuilding = Buildings.AddConstructionSiteEx(760, 474, 2, Buildings.GUARDTOWERBIG, 50)
+                end
+            elseif Game.Random100() > 75 and Game.Random100() <= 100 then
+                if Game.Random100() > 50 then
+                    newBuilding = Buildings.AddConstructionSiteEx(785, 336, 2, Buildings.CASTLE, 50)
+                else
+                    newBuilding = Buildings.AddConstructionSiteEx(785, 336, 2, Buildings.GUARDTOWERBIG, 50)
+                end
+            elseif Game.Random100() >= 25 and Game.Random100() < 50 then
+                 if Game.Random100() > 50 then
+                    newBuilding = Buildings.AddConstructionSiteEx(537, 325, 2, Buildings.CASTLE, 50)
+                else
+                    newBuilding = Buildings.AddConstructionSiteEx(537, 325, 2, Buildings.GUARDTOWERBIG, 50)
+                end
+            elseif Game.Random100() >= 0 and Game.Random100() < 25 then
+                if Game.Random100() > 50 then
+                    newBuilding = Buildings.AddConstructionSiteEx(458, 424, 2, Buildings.CASTLE, 50)
+                else
+                    newBuilding = Buildings.AddConstructionSiteEx(458, 424, 2, Buildings.GUARDTOWERBIG, 50)
+                end
+            else
+                if Game.Random100() > 50 then
+                    newBuilding = Buildings.AddConstructionSiteEx(543, 328, 2, Buildings.CASTLE, 50)
+                else
+                    newBuilding = Buildings.AddConstructionSiteEx(543, 328, 2, Buildings.GUARDTOWERBIG, 50)
+                end
+            end
+        else
+        end
+            SU.Buildings.GarrisonWarriors(newBuilding)
+            Vars.createNextLargeTowerOrCastleBuilding = Vars.createNextLargeTowerOrCastleBuilding + 5
+    end
+end
+function new_game()
+    request_event(visitXardasCircle, Events.TICK)
+    request_event(victoryConditionCheck,Events.VICTORY_CONDITION_CHECK)
+    request_event(evilGomez,Events.TICK)
+
+    -- Kontrola budynków
+    request_event(controlBuildings,Events.TICK)
+
+    --- Pionierzy
+    AI.SetPlayerVar(1, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(3, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(5, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(6, "UsePioneers", 5,10,15)
+    AI.SetPlayerVar(7, "UsePioneers", 5,10,15)
+
+    -- Siła Gomeza i Śniącego
+    Game.SetFightingStrength(2,150)
+    Game.SetFightingStrength(4,150)
+
+    -- Wyłącz tymczasowo Sleeppera i Cor-Kaloma 
+    Debug.DeactivateAI(4)
+    Debug.DeactivateAI(5)
+    
+    -- Handel
+    request_event(tradePlayers,Events.TICK)
+
+    -- Atak Gomeza na Nowy oboz
+
+    -- request_event(attackWarmachine,Events.TICK)
+    -- AI.SetPlayerVar(1, "WarmachineMode", 1,2,5)
+    -- AI.SetPlayerVar(2, "WarmachineMode", 1,2,5)
+    -- AI.SetPlayerVar(3, "WarmachineMode", 1,2,5)
+    -- AI.SetPlayerVar(4, "WarmachineMode", 1,2,5)
+
+
+
+    -- Ustawinie AI dla Kor Kaloma, Sleppera, Gomeza
+    AI.NewSquad(2, AI.DIFFICULTY_LEVEL_HARD )
+    AI.NewSquad(4, AI.DIFFICULTY_LEVEL_HARD )
+
+    -- Magazynuj przedmioty
+    Buildings.AddBuildingEx(676, 410, 2, Buildings.STORAGEAREA)
+    ID_StorageArea = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
+
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.STONE, 32)
+    SU.Buildings.StoreGood(ID_StorageArea, Goods.BOARD, 32)
+
+
+    -- Wyłącz tymczasowo Sleppera i Cor-Kaloma
+    Game.DisableLastNPlayersInStatistic(4)
+    Game.DisableLastNPlayersInStatistic(5)
+
+    -- Stworz gracza Cor-Kaloma
+    request_event(createCorKalom,Events.TICK)
+    -- Stworz atak na wolna kopalnie
+    request_event(createFreeMineCamp,Events.TICK)
+    -- Obsadzaj wieze i zamki zolnierzami
+    request_event(createGarnisonWarriors,Events.TICK)
+
+    -- Tworz kolejne magazyny
+    request_event(createStoreage,Events.TICK)
+
+    -- Tworz zamki i duze wieze
+    request_event(creatLargeTowerOrCastle, Events.TICK)
+
+    -- 
+    request_event(PlayerSleepperGetInfoAndAttackCheck,Events.FIVE_TICKS)
+    request_event(PlayerGomezGetInfoAndAttackCheck,Events.FIVE_TICKS)
+    request_event(PlayerCorKalomGetInfoAndAttackCheck,Events.FIVE_TICKS)
+
+
+    dbg.stm("Witamy w Koloni!")
+ 
+
+    -- Inicjacja zmiennych
+	request_event(InitVar,Events.FIRST_TICK_OF_NEW_GAME)
+
+	--request_event(victoryConditionCheck,Events.VICTORY_CONDITION_CHECK)
+
+ 
+
+    request_event(calculateCircles,Events.FIRST_TICK_OF_NEW_OR_LOADED_GAME)
+
+    -- Bariera dostępu do Sleeppera
+	request_event(drawCircleSleepper,Events.TICK)
+    -- Bariera dostępu do Xardasa
+    request_event(drawCircleXardas,Events.TICK)
+    
+
+    -- Kamienie ogniskujace
+    request_event(drawCircleKamien1,Events.TICK)
+    request_event(drawCircleKamien2,Events.TICK)
+    request_event(drawCircleKamien3,Events.TICK)
+    request_event(drawCircleKamien4,Events.TICK)
+    request_event(drawCircleKamien5,Events.TICK)
+
+	--request_event(calculateCircles,Events.FIRST_TICK_OF_NEW_OR_LOADED_GAME)
+	--request_event(drawCircleSleepper,Events.TICK)
+    request_event(createDarkTribePlayer,Events.TICK)
+
+
+    request_event(deathZoneSleepper,Events.FIVE_TICKS)
+    request_event(deathZoneXardas,Events.TICK)
+
+    AI.SetPlayerVar(1, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(1, "SoldierLimitRelative", 1000,2000,3000)
+
+    AI.SetPlayerVar(2, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(2, "SoldierLimitRelative", 1000,2000,3000)
+
+    AI.SetPlayerVar(3, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(3, "SoldierLimitRelative", 1000,2000,3000)
+
+	AI.SetPlayerVar(4, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(4, "SoldierLimitRelative", 1000,2000,3000)
+
+    AI.SetPlayerVar(5, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(5, "SoldierLimitRelative", 1000,2000,3000)
+
+    AI.SetPlayerVar(6, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(6, "SoldierLimitRelative", 1000,2000,3000)
+
+    AI.SetPlayerVar(7, "SoldierLimitAbsolute", 1000,2000,3000)
+	AI.SetPlayerVar(7, "SoldierLimitRelative", 1000,2000,3000)
+
+
+   dbg.stm("Bądź ostrożny. Nie prowokuj Gomeza. Rozbuduj osadę i spróbój dywersji na Starą Kopalnię Iana, który odpowiada za zaopatrzenie dla Gomeza.")
+
+end
+
+
+
+function createGarnisonWarriors()
+    -- if Game.Time() == Vars.timeToGarnisonWarriors then
+        -- dbg.stm("Dodawanie zolnierzy do wiezy!")
+
+        --  dbg.stm("Dodawanie zolnierzy do wiezy!", LastbuildingIDTower)
+
+        --Gracz 2
+        LastbuildingIDTower = Buildings.GetFirstBuilding(2,Buildings.GUARDTOWERSMALL)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTower)
+
+         LastbuildingIDTowerBig = Buildings.GetFirstBuilding(2,Buildings.GUARDTOWERBIG)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig)
+
+        LastbuildingIDCastle = Buildings.GetFirstBuilding(2,Buildings.CASTLE)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDCastle)
+
+        -- Gracz 3
+
+        -- LastbuildingIDTower3 = Buildings.GetFirstBuilding(3,Buildings.GUARDTOWERSMALL)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDTower3)
+
+        -- LastbuildingIDTowerBig3 = Buildings.GetFirstBuilding(3,Buildings.GUARDTOWERBIG)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig3)
+
+        -- LastbuildingIDCastle3 = Buildings.GetFirstBuilding(3,Buildings.CASTLE)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDCastle3)
+        
+         -- Gracz 5
+
+        LastbuildingIDTower5 = Buildings.GetFirstBuilding(5,Buildings.GUARDTOWERSMALL)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTower5)
+
+        LastbuildingIDTowerBig5 = Buildings.GetFirstBuilding(5,Buildings.GUARDTOWERBIG)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig5)
+
+        LastbuildingIDCastle5 = Buildings.GetFirstBuilding(5,Buildings.CASTLE)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDCastle5)
+
+
+
+         -- Gracz 6
+
+        -- LastbuildingIDTower6 = Buildings.GetFirstBuilding(6,Buildings.GUARDTOWERSMALL)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDTower6)
+
+        -- LastbuildingIDTowerBig6 = Buildings.GetFirstBuilding(6,Buildings.GUARDTOWERBIG)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig6)
+
+        -- LastbuildingIDCastle6 = Buildings.GetFirstBuilding(6,Buildings.CASTLE)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDCastle6)
+
+
+         -- Gracz 7
+
+        LastbuildingIDTower7 = Buildings.GetFirstBuilding(7,Buildings.GUARDTOWERSMALL)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTower7)
+
+        LastbuildingIDTowerBig7 = Buildings.GetFirstBuilding(7,Buildings.GUARDTOWERBIG)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig7)
+
+        LastbuildingIDCastle7 = Buildings.GetFirstBuilding(7,Buildings.CASTLE)
+        SU.Buildings.GarrisonWarriors(LastbuildingIDCastle7)
+
+        Vars.timeToGarnisonWarriors = Vars.timeToGarnisonWarriors + 5
+    -- end
+end
+function register_functions()
+    reg_func(InitVar)
+    reg_func(visitXardasCircle)
+    reg_func(evilGomez)
+    reg_func(victoryConditionCheck)
+    reg_func(createFreeMineCamp)
+    reg_func(createCorKalom)
+    reg_func(controlBuildings)
+    reg_func(creatLargeTowerOrCastle)
+    reg_func(createStoreage)
+    reg_func(tradePlayers)
+
+    reg_func(createGarnisonWarriors)
+    -- reg_func(attackWarShip)
+    -- reg_func(attackWarmachine)
+
+	reg_func(createDarkTribePlayer)
+
+
+    reg_func(PlayerSleepperGetInfoAndAttackCheck)
+    reg_func(PlayerGomezGetInfoAndAttackCheck)
+    reg_func(PlayerCorKalomGetInfoAndAttackCheck)
+
+
+    reg_func(calculateCircles)
+    reg_func(drawCircleSleepper)
+
+    reg_func(drawCircleXardas)
+    reg_func(drawCircleKamien1)
+    reg_func(drawCircleKamien2)
+    reg_func(drawCircleKamien3)
+    reg_func(drawCircleKamien4)
+    reg_func(drawCircleKamien5)
+
+    reg_func(deathZoneSleepper)
+    reg_func(deathZoneXardas)
+
+end
+
+function controlBuildings()
+    if Game.Time() == Vars.timeToControlBuildings then
+        buildingIdStorage = Buildings.GetFirstBuilding(2,Buildings.STORAGEAREA)
+
+        if Game.Random100() >= 50 then
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.WINE, 8)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 8)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 24)
+        else
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.BOARD, 16)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.IRONBAR, 16)
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.COAL, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage, Goods.GOLDBAR, 16)
+        end
+
+        buildingIdStorage7 = Buildings.GetFirstBuilding(7,Buildings.STORAGEAREA)
+
+        if Game.Random100() >= 50 then
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.GOLDORE, 16)
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.IRONORE, 16)
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.FISH, 16)
+
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.BOARD, 16)
+        else
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.STONE, 32)
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.IRONORE, 16)
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.FISH, 8)
+
+            SU.Buildings.StoreGood(buildingIdStorage7, Goods.BOARD, 8)
+        end
+
+
+
+        Vars.timeToControlBuildings = Vars.timeToControlBuildings + 1
+    end
+end
+function PlayerSleepperGetInfoAndAttackCheck()
+
+	if Game.Time() == Vars.timeToAttackDarkTribe then
+
+            if Vars.spawnSupportBeforeAttackDarkTribe == 0 then
+                dbg.stm("Śniący wysyła swoje sługi w walce przeciwko nam! Pokonaj ich!")
+
+                -- Map.SetScreenPos(954,105)
+
+                Magic.IncreaseMana(1,100)
+                Magic.IncreaseMana(6,100)
+                Magic.IncreaseMana(3,100)
+
+                AI.NewSquad(4, AI.CMD_SUICIDE_MISSION )
+
+                Vars.spawnSupportBeforeAttackDarkTribe = Vars.spawnSupportBeforeAttackDarkTribe + 1
+            end
+
+			AI.AttackNow(4, 2, 100)
+
+            AI.SetPlayerVar(4, "AttackThresholdTotal", 250, 500, 1000)
+
+			Vars.timeToAttackDarkTribe = Vars.timeToAttackDarkTribe + 5 + Game.Random(5)
+	end
+end
+
+function createDarkTribePlayer()
+    if Game.Time() == Vars.timeToCreateDarkTribe then
+
+            Debug.ActivateAI(4)
+            dbg.stm("Śniący budzi się ze snu przez szalonych wyznawców przewodzonych przez Cor-Kaloma. Musimy go powstrzymać!")
+            -- Game.ResetFogging()
+            AI.NewSquad(4, AI.ATTACK_MODE_AGGRESSIVE )
+
+
+            Map.SetScreenPos(362,882)
+            Magic.CastSpell(1, 4,Magic.SPELL_SPECIAL, 362, 882)
+            Magic.CastSpell(3, 4,Magic.SPELL_SPECIAL, 362, 882)
+            Magic.CastSpell(6, 4,Magic.SPELL_SPECIAL, 362, 882)
+
+
+            Magic.CastSpell(4, 3,Magic.SPELL_TERRAIN, 888, 492)
+            
+            Magic.CastSpell(4, 3,Magic.SPELL_TERRAIN, 860, 470)
+
+            Magic.CastSpell(4, 3,Magic.SPELL_TERRAIN, 843, 495)
+
+            Magic.CastSpell(4, 3,Magic.SPELL_TERRAIN, 774, 457)
+            Magic.CastSpell(4, 3,Magic.SPELL_TERRAIN, 567, 739)
+            
+            Magic.CastSpell(4, 3,Magic.SPELL_TERRAIN, 135, 636)
+
+
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 758,701,0)
+            Buildings.AddBuildingEx(758, 701, 4, Buildings.MUSHROOMFARM)
+
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 410,576,0)
+            Buildings.AddBuildingEx(410, 576, 4, Buildings.MUSHROOMFARM)
+
+            Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 392,545,0)
+            Buildings.AddBuildingEx(392, 545, 4, Buildings.MUSHROOMFARM)
+
+            -- Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 870,494,0)
+            -- Buildings.AddBuildingEx(870, 494, 5, Buildings.MUSHROOMFARM)
+
+            -- Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 868,526,0)
+            -- Buildings.AddBuildingEx(868, 526, 5, Buildings.MUSHROOMFARM)
+
+            -- Effects.AddEffect(Effects.MUSHROOMFARM_BUILD, Sounds.MAGIC_STONECURSE, 875,465,0)
+            -- Buildings.AddBuildingEx(875, 465, 5, Buildings.MUSHROOMFARM)
+            
+
+            AI.DarkTribeUseDarkGardeners(4,1)
+            AI.DarkTribeUseShamans(4,1)
+
+
+            Magic.IncreaseMana(4,10000)
+
+            Settlers.AddSettlers(413, 853, 4, Settlers.SWORDSMAN_01, 600)
+            Settlers.AddSettlers(461, 764, 4, Settlers.BOWMAN_01, 475)
+            
+    		Settlers.AddSettlers(413, 853, 4, Settlers.SHAMAN, 150)
+            Settlers.AddSettlers(461, 764, 4, Settlers.DARKGARDENER, 75)
+
+    		AI.NewSquad(4, AI.CMD_SUICIDE_MISSION )
+
+            AI.SetPlayerVar(4, "DTMaxFarmsPerHour", 100, 200, 400)
+
+            AI.SetPlayerVar(4, "DTManaPerSphere", 12, 24, 48)
+
+            
+            AI.SetPlayerVar(4, "DTManakopterLimit", 10, 30, 50)
+
+            AI.SetPlayerVar(4, "SoldierLimitAbsolute", 1000,2000,3000)
+            AI.SetPlayerVar(4, "SoldierLimitRelative", 1000,2000,3000)
+
+        Vars.timeToCreateDarkTribe = 0
+    end
+end
+
+
+--###############################################################################################
+--# circles 
+--###############################################################################################
+-- density=1, delay=0, effectsPerTick=1, split=4, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+
+circles={
+	circleSleepper={
+		center={x=364,y=875}, radius=35, effect=Effects.DARKFLAME, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+    circleKamien1={
+		center={x=917,y=814}, radius=10, effect=Effects.MAGIC_PILE02, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+    circleKamien2={
+		center={x=420,y=106}, radius=10, effect=Effects.MAGIC_PILE02, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+    circleKamien3={
+		center={x=783,y=147}, radius=10, effect=Effects.MAGIC_PILE02, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+    circleKamien4={
+		center={x=289,y=515}, radius=10, effect=Effects.MAGIC_PILE02, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+    circleKamien5={
+		center={x=691,y=663}, radius=10, effect=Effects.MAGIC_PILE02, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+
+    circleXardas={
+		center={x=666,y=864}, radius=20, effect=Effects.DARKFLAME, sound=Sounds.NO_SOUND,
+		density=2, delay=0, effectsPerTick=10, split=2, coordinates={x={},y={}}, effectsAmount=1, _i=1, _j=1
+	},
+}
+
+function circles.calculate(_circle)
+	distance=0
+	while (distance<=(6*_circle.radius)) do
+		if distance<=_circle.radius then
+			--Calculation of coordinates on upper side of hexagon
+			_x = _circle.center.x - _circle.radius + distance
+			_y = _circle.center.y - _circle.radius
+		elseif distance<=_circle.radius*2 then
+			--Calculation of coordinates on upper right side of hexagon
+			_x = _circle.center.x - _circle.radius + distance
+			_y = _circle.center.y - (2*_circle.radius) + distance
+		elseif distance<=_circle.radius*3 then
+			--Calculation of coordinates on lower right side of hexagon
+			_x = _circle.center.x + _circle.radius
+			_y = _circle.center.y + (distance-(2*_circle.radius))
+		elseif distance<=_circle.radius*4 then
+			--Calculation of coordinates on lower side of hexagon
+			_x = _circle.center.x +(4*_circle.radius) - distance
+			_y = _circle.center.y + _circle.radius
+		elseif distance<=_circle.radius*5 then
+			--Calculation of coordinates on lower left side of hexagon
+			_x = _circle.center.x + (4*_circle.radius) - distance
+			_y = _circle.center.y + (5*_circle.radius) - distance
+		else
+			--Calculation of coordinates on upper left side of hexagon
+			_x = _circle.center.x - _circle.radius
+			_y = _circle.center.y + (5*_circle.radius) - distance
+		end
+		distance = distance + _circle.density
+		_circle.coordinates.x[_circle.effectsAmount]=_x
+		_circle.coordinates.y[_circle.effectsAmount]=_y
+		_circle.effectsAmount=_circle.effectsAmount+1
+	end
+end
+
+
+function circles.draw(_circle)
+	drawnEffects=0
+	while drawnEffects<_circle.effectsPerTick do
+		if _circle._j<_circle.split then
+			if _circle._i<_circle.effectsAmount then
+				_x=_circle.coordinates.x[_circle._i]
+				_y=_circle.coordinates.y[_circle._i]
+				Effects.AddEffect(_circle.effect, _circle.sound, _x, _y, _circle.delay)
+				_circle._i=_circle._i+_circle.split
+			else
+				_circle._j=_circle._j+1
+				_circle._i=_circle._j
+			end
+		else
+			_circle._j=0
+		end
+		drawnEffects=drawnEffects+1
+	end
+end
+
+function calculateCircles()
+	circles.calculate(circles.circleSleepper)
+
+    circles.calculate(circles.circleKamien1)
+    circles.calculate(circles.circleKamien2)
+    circles.calculate(circles.circleKamien3)
+    circles.calculate(circles.circleKamien4)
+    circles.calculate(circles.circleKamien5)
+    circles.calculate(circles.circleXardas)
+end
+
+function drawCircleKamien1()
+    if Game.FindAnyUnit(1, 917, 814, 10) == 1 or Game.FindAnyUnit(3, 917, 814, 10) == 1 or Game.FindAnyUnit(6, 917, 814, 10) == 1 then
+        dbg.stm("Znalazłeś Kamień ogniskujący od nowicjusza Nryasa!")
+        unrequest_event(drawCircleKamien1,Events.TICK)
+        Vars.kamienieOgniskujace = Vars.kamienieOgniskujace + 1
+
+        if Vars.kamienieOgniskujace >= 5 then
+            dbg.stm("Znalazłeś wszystkie kamienie ogniskujace! Znajdź Xardasa powinien nam pomóc znaleźć sposób na wydsotanie się z Koloni!")
+            unrequest_event(deathZoneXardas)
+            unrequest_event(drawCircleXardas)
+            Vars.possibleXardasHelp = 1
+        end
+    else
+        circles.draw(circles.circleKamien1)
+    end
+end
+function drawCircleKamien2()
+    if Game.FindAnyUnit(1, 420, 106, 10) == 1 or Game.FindAnyUnit(3, 420, 106, 10) == 1 or Game.FindAnyUnit(6, 420, 106, 10) == 1 then
+        dbg.stm("Znalazłeś Kamień ogniskujący z kaniunu trolli!")
+        unrequest_event(drawCircleKamien2,Events.TICK)
+        Vars.kamienieOgniskujace = Vars.kamienieOgniskujace + 1
+        if Vars.kamienieOgniskujace >= 5 then
+            dbg.stm("Znalazłeś wszystkie kamienie ogniskujace! Znajdź Xardasa powinien nam pomóc znaleźć sposób na wydsotanie się z Koloni!")
+            unrequest_event(deathZoneXardas)
+            unrequest_event(drawCircleXardas)
+            Vars.possibleXardasHelp = 1
+        end
+    else
+        circles.draw(circles.circleKamien2)
+    end
+end
+function drawCircleKamien3()
+    if Game.FindAnyUnit(1, 783, 147, 10) == 1 or Game.FindAnyUnit(3, 783, 147, 10) == 1 or Game.FindAnyUnit(6, 783, 147, 10) == 1 then
+        dbg.stm("Znalazłeś Kamień ogniskujący z klasztoru zmiennokształtnych!")
+        unrequest_event(drawCircleKamien3,Events.TICK)
+        Vars.kamienieOgniskujace = Vars.kamienieOgniskujace + 1
+        if Vars.kamienieOgniskujace >= 5 then
+            dbg.stm("Znalazłeś wszystkie kamienie ogniskujace! Znajdź Xardasa powinien nam pomóc znaleźć sposób na wydsotanie się z Koloni!")
+            unrequest_event(deathZoneXardas)
+            unrequest_event(drawCircleXardas)
+            Vars.possibleXardasHelp = 1
+        end
+    else
+        circles.draw(circles.circleKamien3)
+    end
+end
+function drawCircleKamien4()
+     if Game.FindAnyUnit(1, 289, 515, 10) == 1 or Game.FindAnyUnit(3, 289, 515, 10) == 1 or Game.FindAnyUnit(6, 289, 515, 10) == 1 then
+        dbg.stm("Znalazłeś Kamień ogniskujący z kamiennego kręgu!")
+        unrequest_event(drawCircleKamien4,Events.TICK)
+        Vars.kamienieOgniskujace = Vars.kamienieOgniskujace + 1
+
+        if Vars.kamienieOgniskujace >= 5 then
+            dbg.stm("Znalazłeś wszystkie kamienie ogniskujace! Znajdź Xardasa powinien nam pomóc znaleźć sposób na wydsotanie się z Koloni!")
+            unrequest_event(deathZoneXardas)
+            unrequest_event(drawCircleXardas)
+            Vars.possibleXardasHelp = 1
+        end
+    else
+        circles.draw(circles.circleKamien4)
+    end
+end
+function drawCircleKamien5()
+    if Game.FindAnyUnit(1, 691, 663, 10) == 1 or Game.FindAnyUnit(3, 691, 663, 10) == 1 or Game.FindAnyUnit(6, 691, 663, 10) == 1 then
+        dbg.stm("Znalazłeś Kamień ogniskujący z górskiej fortecy!")
+        unrequest_event(drawCircleKamien5,Events.TICK)
+        Vars.kamienieOgniskujace = Vars.kamienieOgniskujace + 1
+        if Vars.kamienieOgniskujace >= 5 then
+            dbg.stm("Znalazłeś wszystkie kamienie ogniskujace! Znajdź Xardasa powinien nam pomóc znaleźć sposób na wydsotanie się z Koloni!")
+            unrequest_event(deathZoneXardas)
+            unrequest_event(drawCircleXardas)
+            Vars.possibleXardasHelp = 1
+        end
+    else
+        circles.draw(circles.circleKamien5)
+    end
+end
+function visitXardasCircle()
+    if Game.FindAnyUnit(1, 666, 864, 10) == 1 or Game.FindAnyUnit(3, 691, 663, 10) == 1 or Game.FindAnyUnit(6, 691, 663, 10) == 1 then
+
+        if Vars.possibleSlepperConquer == 0 then
+            dbg.stm("Xardas pomógł nam przełamać magiczną barierę do Świątyni Śniącego. Pokonanie Śniącego to jedyna droga na wydostanie się z Kolonii!")
+            unrequest_event(drawCircleSleepper,Events.TICK)
+            unrequest_event(deathZoneSleepper,Events.TICK)
+            Vars.possibleSlepperConquer = 1
+        end    
+     else
+        unrequest_event(visitXardasCircle)
+     end
+end
+function drawCircleXardas()
+    if 1 == Vars.possibleXardasHelp then
+    else
+        circles.draw(circles.circleXardas)
+    end
+end
+function drawCircleSleepper()
+    if Game.Time() < Vars.timeToCreateDarkTribe then
+        circles.draw(circles.circleSleepper)
+        
+    else
+         circles.draw(circles.circleSleepper)
+        -- unrequest_event(drawCircleSleepper,Events.TICK)
+    end
+end
