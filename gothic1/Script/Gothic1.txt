@@ -344,10 +344,12 @@ function creatLargeTowerOrCastle()
         --         Buildings.AddConstructionSiteEx(470, 496, 3, Buildings.HEALERHUT, 32)    
         --     end
         -- end
-        if Game.Random100() > 50 then
-            rezydencja =  Buildings.AddBuildingEx(789, 338, 2, Buildings.RESIDENCEBIG)
-        else
-            rezydencja =  Buildings.AddBuildingEx(508, 430, 2, Buildings.RESIDENCEBIG)
+        if Buildings.Amount(2, Buildings.CASTLE, Buildings.READY) < 5 then
+            if Game.Random100() > 50 then
+                rezydencja =  Buildings.AddBuildingEx(789, 338, 2, Buildings.RESIDENCEBIG)
+            else
+                rezydencja =  Buildings.AddBuildingEx(508, 430, 2, Buildings.RESIDENCEBIG)
+            end
         end
 
         if Buildings.Amount(2, Buildings.CASTLE, Buildings.READY) < 20 then
