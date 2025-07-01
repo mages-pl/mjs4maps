@@ -523,7 +523,7 @@ end
 
 
 function createGarnisonWarriors()
-    -- if Game.Time() == Vars.timeToGarnisonWarriors then
+    if Game.Time() == Vars.timeToGarnisonWarriors then
         -- dbg.stm("Dodawanie zolnierzy do wiezy!")
 
         --  dbg.stm("Dodawanie zolnierzy do wiezy!", LastbuildingIDTower)
@@ -586,7 +586,7 @@ function createGarnisonWarriors()
         SU.Buildings.GarrisonWarriors(LastbuildingIDCastle7)
 
         Vars.timeToGarnisonWarriors = Vars.timeToGarnisonWarriors + 5
-    -- end
+    end
 end
 function register_functions()
     reg_func(InitVar)
