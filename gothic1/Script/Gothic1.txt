@@ -576,14 +576,14 @@ function createGarnisonWarriors()
 
          -- Gracz 7
 
-        LastbuildingIDTower7 = Buildings.GetFirstBuilding(7,Buildings.GUARDTOWERSMALL)
-        SU.Buildings.GarrisonWarriors(LastbuildingIDTower7)
+        -- LastbuildingIDTower7 = Buildings.GetFirstBuilding(7,Buildings.GUARDTOWERSMALL)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDTower7)
 
-        LastbuildingIDTowerBig7 = Buildings.GetFirstBuilding(7,Buildings.GUARDTOWERBIG)
-        SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig7)
+        -- LastbuildingIDTowerBig7 = Buildings.GetFirstBuilding(7,Buildings.GUARDTOWERBIG)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDTowerBig7)
 
-        LastbuildingIDCastle7 = Buildings.GetFirstBuilding(7,Buildings.CASTLE)
-        SU.Buildings.GarrisonWarriors(LastbuildingIDCastle7)
+        -- LastbuildingIDCastle7 = Buildings.GetFirstBuilding(7,Buildings.CASTLE)
+        -- SU.Buildings.GarrisonWarriors(LastbuildingIDCastle7)
 
         Vars.timeToGarnisonWarriors = Vars.timeToGarnisonWarriors + 5
     end
